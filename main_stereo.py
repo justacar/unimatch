@@ -191,9 +191,9 @@ def main(args):
     num_params = sum(p.numel() for p in model.parameters())
     if print_info:
         print('=> Number of trainable parameters: %d' % num_params)
-    if not args.eval and not args.submission and args.inference_dir is None:
-        save_name = '%d_parameters' % num_params
-        open(os.path.join(args.checkpoint_dir, save_name), 'a').close()
+#     if not args.eval and not args.submission and args.inference_dir is None:
+#         save_name = '%d_parameters' % num_params
+#         open(os.path.join(args.checkpoint_dir, save_name), 'a').close()
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr,
                                   weight_decay=args.weight_decay)
