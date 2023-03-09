@@ -739,14 +739,14 @@ def inference_stereo(model,
     assert inference_dir or (inference_dir_left and inference_dir_right)
 
     if inference_dir is not None:
-        filenames = sorted(glob(inference_dir + '/*.png') + glob(inference_dir + '/*.jpg'))
+        filenames = sorted(glob(inference_dir + '/*.jpeg') + glob(inference_dir + '/*.jpg'))
 
         left_filenames = filenames[::2]
         right_filenames = filenames[1::2]
 
     else:
-        left_filenames = sorted(glob(inference_dir_left + '/*.png') + glob(inference_dir_left + '/*.jpg'))
-        right_filenames = sorted(glob(inference_dir_right + '/*.png') + glob(inference_dir_right + '/*.jpg'))
+        left_filenames = sorted(glob(inference_dir_left + '/*.jpeg') + glob(inference_dir_left + '/*.jpg'))
+        right_filenames = sorted(glob(inference_dir_right + '/*.jpeg') + glob(inference_dir_right + '/*.jpg'))
 
     assert len(left_filenames) == len(right_filenames)
 
@@ -763,8 +763,8 @@ def inference_stereo(model,
         left_name = left_filenames[i]
         right_name = right_filenames[i]
 
-        left = np.array(Image.open(left_name).convert('RGB')).astype(np.float32)
-        right = np.array(Image.open(right_name).convert('RGB')).astype(np.float32)
+        left = np.array(Image.open(left_name).resize((2016,1520)).convert('RGB')).astype(np.float32)
+        right = np.array(Image.open(right_name).resize((2016,1520)).convert('RGB')).astype(np.float32)
         sample = {'left': left, 'right': right}
 
         sample = val_transform(sample)
@@ -820,8 +820,8 @@ def inference_stereo(model,
         disp = pred_disp[0].cpu().numpy()
 
         if save_pfm_disp:
-            save_name_pfm = save_name[:-4] + '.pfm'
-            write_pfm(save_name_pfm, disp)
+            save_name_pfm = save_name[:-4] + '.npy'
+            np.save(save_name_pfm, disp)
 
         disp = vis_disparity(disp)
         cv2.imwrite(save_name, disp)
