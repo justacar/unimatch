@@ -763,8 +763,8 @@ def inference_stereo(model,
         left_name = left_filenames[i]
         right_name = right_filenames[i]
 
-        left = np.array(Image.open(left_name).resize((2016,1520)).convert('RGB')).astype(np.float32)
-        right = np.array(Image.open(right_name).resize((2016,1520)).convert('RGB')).astype(np.float32)
+        left = np.array(Image.open(left_name).convert('RGB')).astype(np.float32)
+        right = np.array(Image.open(right_name).convert('RGB')).astype(np.float32)
         sample = {'left': left, 'right': right}
 
         sample = val_transform(sample)
@@ -808,8 +808,8 @@ def inference_stereo(model,
         if inference_size[0] != ori_size[0] or inference_size[1] != ori_size[1]:
             # resize back
             pred_disp = F.interpolate(pred_disp.unsqueeze(1), size=ori_size,
-                                      mode='bilinear',
-                                      align_corners=True).squeeze(1)  # [1, H, W]
+                                      mode='nearest',
+                                      ).squeeze(1)  # [1, H, W]
             pred_disp = pred_disp * ori_size[-1] / float(inference_size[-1])
 
         save_name = os.path.join(output_path, os.path.basename(left_name)[:-4] + '_disp.png')
